@@ -1,9 +1,9 @@
-const { 
-    getAllJurisdicciones, 
-    getJurisdiccion, 
-    createJurisdiccion, 
-    updateJurisdiccion, 
-    deleteJurisdiccion 
+const {
+    getAllJurisdicciones,
+    getJurisdiccion,
+    createJurisdiccion,
+    updateJurisdiccion,
+    deleteJurisdiccion
 } = require("../controllers/jurisdiccionController");
 
 // Handler para obtener todas las jurisdicciones con paginación
@@ -11,26 +11,20 @@ const getAllJurisdiccionesHandler = async (req, res) => {
     const { page = 1, limit = 20 } = req.query;
     const errores = [];
 
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+    if (isNaN(Number(page)) || Number(page) <= 0) errores.push("El 'page' debe ser un número mayor a 0.");
+    if (isNaN(Number(limit)) || Number(limit) <= 0) errores.push("El 'limit' debe ser un número mayor a 0.");
 
     if (errores.length > 0) {
-        return res.status(400).json({ errores });
+        return res.status(400).json({ message: "Errores de validación", errores });
     }
 
     try {
         const response = await getAllJurisdicciones(Number(page), Number(limit));
 
-        if (response.data.length === 0) {
+        if (!response || response.data.length === 0) {
             return res.status(200).json({
-                message: 'Ya no hay más jurisdicciones',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                message: "No hay jurisdicciones disponibles",
+                data: { totalCount: 0, data: [], currentPage: page }
             });
         }
 
@@ -46,9 +40,9 @@ const getAllJurisdiccionesHandler = async (req, res) => {
 
 // Handler para obtener una jurisdicción por ID
 const getJurisdiccionHandler = async (req, res) => {
-    const id = req.params.id;
+    const id = Number(req.params.id);
 
-    if (!id || isNaN(id)) {
+    if (isNaN(id) || id <= 0) {
         return res.status(400).json({ message: "ID inválido" });
     }
 
@@ -67,18 +61,17 @@ const getJurisdiccionHandler = async (req, res) => {
 
 // Handler para crear una jurisdicción
 const createJurisdiccionHandler = async (req, res) => {
-    const { nombre } = req.body;
+    let { nombre } = req.body;
     const errores = [];
 
-    if (!nombre) {
-        errores.push('El campo nombre es requerido');
-    }
-    if (typeof nombre !== 'string') {
-        errores.push('El campo nombre debe ser una cadena de texto');
+    if (!nombre || typeof nombre !== 'string' || !nombre.trim()) {
+        errores.push("El campo 'nombre' es obligatorio y debe ser una cadena de texto válida.");
+    } else {
+        nombre = nombre.trim();
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({ message: 'Se encontraron los siguientes errores', errores });
+        return res.status(400).json({ message: "Se encontraron los siguientes errores", errores });
     }
 
     try {
@@ -99,22 +92,19 @@ const createJurisdiccionHandler = async (req, res) => {
 
 // Handler para actualizar una jurisdicción
 const updateJurisdiccionHandler = async (req, res) => {
-    const id = req.params.id;
-    const { nombre } = req.body;
+    const id = Number(req.params.id);
+    let { nombre } = req.body;
     const errores = [];
 
-    if (!id || isNaN(id)) {
-        errores.push('El campo ID es inválido');
-    }
-    if (!nombre) {
-        errores.push('El campo nombre es requerido');
-    }
-    if (typeof nombre !== 'string') {
-        errores.push('El campo nombre debe ser una cadena de texto');
+    if (isNaN(id) || id <= 0) errores.push("El 'id' es inválido.");
+    if (nombre !== undefined && (typeof nombre !== 'string' || !nombre.trim())) errores.push("El 'nombre' debe ser una cadena de texto válida.");
+
+    if (nombre) {
+        nombre = nombre.trim();
     }
 
     if (errores.length > 0) {
-        return res.status(400).json({ message: 'Se encontraron los siguientes errores', errores });
+        return res.status(400).json({ message: "Se encontraron los siguientes errores", errores });
     }
 
     try {
@@ -135,9 +125,9 @@ const updateJurisdiccionHandler = async (req, res) => {
 
 // Handler para eliminar una jurisdicción (cambia el estado a false)
 const deleteJurisdiccionHandler = async (req, res) => {
-    const id = req.params.id;
+    const id = Number(req.params.id);
 
-    if (!id || isNaN(id)) {
+    if (isNaN(id) || id <= 0) {
         return res.status(400).json({ message: "ID inválido" });
     }
 

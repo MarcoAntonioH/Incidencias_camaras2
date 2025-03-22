@@ -1,4 +1,4 @@
-const { Jurisdiccion } = require("../db.connection");
+const { Jurisdiccion } = require("../db_connection");
 
 // Obtener todas las jurisdicciones (solo activas)
 const getAllJurisdicciones = async (page = 1, limit = 20) => {

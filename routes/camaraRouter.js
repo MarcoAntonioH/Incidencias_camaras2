@@ -1,18 +1,21 @@
 const { Router } = require("express");
+const router = Router();
 const {
     getAllCamarasHandler,
     getCamaraHandler,
     createCamaraHandler,
     updateCamaraHandler,
-    deleteCamaraHandler
+    deleteCamaraHandler,
 } = require("../handlers/camaraHandler");
 
-const router = Router();
-
-router.get("/", getAllCamarasHandler);
-router.get("/:id", getCamaraHandler);
-router.post("/", createCamaraHandler);
-router.put("/:id", updateCamaraHandler);
-router.delete("/:id", deleteCamaraHandler);
+router.get("/",  getAllCamarasHandler);
+router.get("/:id",getCamaraHandler);
+router.post("/",  createCamaraHandler);
+router.patch("/:id", updateCamaraHandler);
+router.delete("/:id",  deleteCamaraHandler);
 
 module.exports = router;
+
+
+
+

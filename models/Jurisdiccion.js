@@ -1,29 +1,39 @@
-const {DataTypes} =require("sequelize");
-const { sequelize } = require("../db_connection");
+const { DataTypes } = require("sequelize");
 
-module.exports=(sequelize)=> {
-    const Jurisdiccion = sequelize.define("Juridisccion", {
-        id:{
-            type:DataTypes.INTEGER,
-            primaryKey:true,
-            allowNull:false,
+module.exports = (sequelize) => {
+    const Jurisdiccion = sequelize.define(
+        "Jurisdiccion",
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false,
+            },
+            nombre: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            state: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true,
+                allowNull: false,
+            },
         },
-        nombre:{
-            type:DataTypes.STRING,
-            allowNull:false,
-        },
-    },{
-        tableName: "Jurisdicciones",
-        timestamps: true,
-    });
+        {
+            tableName: "Jurisdicciones",
+            timestamps: true,
+        }
+    );
 
-
-    Jurisdiccion.associate=(db)=>{
-        Jurisdiccion.hasMany(db.Camara,{
-            foreignkeys: "id_jurisdccion",
-            as:"camaras"
-        });
+    Jurisdiccion.associate = (models) => {
+        if (models.Camara) {
+            Jurisdiccion.hasMany(models.Camara, {
+                foreignKey: "id_Jurisdiccion",
+                as: "camaras",
+            });
+        }
     };
-    return Jurisdiccion
 
+    return Jurisdiccion;
 };

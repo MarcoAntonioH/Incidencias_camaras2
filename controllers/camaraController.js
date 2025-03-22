@@ -1,6 +1,6 @@
-const { Camara } = require("../db.connection");
+const { Camara } = require("../db_connection");
 
-// Obtener todas las cámaras (solo activas)
+// Obtener todas las cámaras activas con paginación
 const getAllCamaras = async (page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
     try {
@@ -10,14 +10,18 @@ const getAllCamaras = async (page = 1, limit = 20) => {
             offset,
             order: [["id", "ASC"]],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return {
+            totalCount: response.count,
+            data: response.rows,
+            currentPage: page,
+        } || null;
     } catch (error) {
         console.error("Error en el controlador al traer todas las Cámaras:", error);
         return false;
     }
 };
 
-// Obtener una cámara por ID (solo si está activa)
+// Obtener una cámara por ID
 const getCamara = async (id) => {
     try {
         const response = await Camara.findOne({ where: { id, state: true } });
@@ -51,15 +55,11 @@ const updateCamara = async (id, datos) => {
     }
 };
 
-// Eliminar una cámara (cambia el estado a false en lugar de eliminar)
+// Borrado lógico de una cámara
 const deleteCamara = async (id) => {
     try {
         const camara = await Camara.findByPk(id);
-
-        if (!camara) {
-            console.error("Cámara no encontrada");
-            return null;
-        }
+        if (!camara) return null;
 
         camara.state = false;
         await camara.save();

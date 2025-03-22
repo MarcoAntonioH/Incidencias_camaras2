@@ -14,9 +14,34 @@ module.exports = (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false, 
             },
+            codigo_Incidencia: { // Código de la cámara relacionado
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            fecha: {
+                type: DataTypes.DATEONLY,
+                allowNull: false,
+            },
             hora: {
                 type: DataTypes.TIME,
                 allowNull: false,
+            },
+            turno: { 
+                type: DataTypes.ENUM('MAÑANA', 'TARDE', 'NOCHE'),
+                allowNull: false,
+            },
+            state: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
+            id_camara: { // Relación con la Cámara
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'Camaras',
+                    key: 'id',
+                },
             },
         },
         {
@@ -26,33 +51,10 @@ module.exports = (sequelize) => {
     );
 
     Incidencia.associate = (db) => {
-        if (db.Codigo) {
-            Incidencia.belongsTo(db.Codigo, {
-                foreignKey: "id_codigo",
-                as: "codigo",
-            });
-        }
-
-        if (db.Camara) {
-            Incidencia.belongsTo(db.Camara, {
-                foreignKey: "id_camara",
-                as: "camara",
-            });
-        }
-
-        if (db.Turno) {
-            Incidencia.belongsTo(db.Turno, {
-                foreignKey: "id_turno",
-                as: "turno",
-            });
-        }
-
-        if (db.Usuario) {
-            Incidencia.belongsTo(db.Usuario, {
-                foreignKey: "id_usuario",
-                as: "usuario",
-            });
-        }
+        Incidencia.belongsTo(db.Camara, {
+            foreignKey: "id_camara",
+            as: "camara",
+        });
     };
 
     return Incidencia;

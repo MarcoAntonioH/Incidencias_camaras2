@@ -21,6 +21,12 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        state: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            allowNull: false,
+          }
+          
     }, {
         tableName: "Usuarios",
         timestamps: true,
@@ -35,7 +41,7 @@ module.exports = (sequelize) => {
             foreignKey: "id_usuario",
             as: "incidencias",
         });
-    };
+    }; 
 
     return Usuario;
 };

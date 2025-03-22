@@ -18,6 +18,19 @@ module.exports = (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            id_Jurisdiccion: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'Jurisdicciones',
+                    key: 'id',
+                },
+            },
+            state: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true,
+                allowNull: false,
+            },
         },
         {
             tableName: "Camaras",
@@ -26,19 +39,15 @@ module.exports = (sequelize) => {
     );
 
     Camara.associate = (db) => {
-        if (db.Jurisdiccion) {
-            Camara.belongsTo(db.Jurisdiccion, {
-                foreignKey: "id_Jurisdiccion",
-                as: "jurisdiccion",
-            });
-        }
+        Camara.belongsTo(db.Jurisdiccion, {
+            foreignKey: "id_Jurisdiccion",
+            as: "jurisdiccion",
+        });
 
-        if (db.Incidencia) {
-            Camara.belongsTo(db.Incidencia, {
-                foreignKey: "id_camara",
-                as: "incidencias",
-            });
-        }
+        Camara.hasMany(db.Incidencia, {
+            foreignKey: "id_camara",
+            as: "incidencias",
+        });
     };
 
     return Camara;

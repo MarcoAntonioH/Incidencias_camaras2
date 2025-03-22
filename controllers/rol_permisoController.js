@@ -1,4 +1,4 @@
-const { Rol, Permiso } = require("../../../config/db_connection");
+const { Rol, Permiso } = require("../db_connection");
 
 const createRol = async (nombre, descripcion, permisos) => {
 

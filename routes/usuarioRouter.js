@@ -5,7 +5,7 @@ const {
     createUsuarioHandler,
     updateUsuarioHandler,
     deleteUsuarioHandler
-} = require("../handlers/usuarioHandlers");
+} = require("../handlers/usuarioHandler");
 
 const router = Router();
 

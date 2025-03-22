@@ -6,7 +6,7 @@ const {
     deleteCamara
 } = require("../controllers/camaraController");
 
-// Handler para obtener todas las cámaras con paginación
+// Handler para obtener todas las cámaras
 const getAllCamarasHandler = async (req, res) => {
     const { page = 1, limit = 20 } = req.query;
     const errores = [];
@@ -22,14 +22,14 @@ const getAllCamarasHandler = async (req, res) => {
 
     try {
         const response = await getAllCamaras(Number(page), Number(limit));
-        
-        if (response.data.length === 0) {
+
+        if (!response || response.data.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más cámaras',
                 data: {
                     data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
+                    totalPage: Number(page),
+                    totalCount: 0
                 }
             });
         }
@@ -43,7 +43,7 @@ const getAllCamarasHandler = async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor al obtener las cámaras." });
     }
 };
-
+                                           
 // Handler para obtener una cámara por ID
 const getCamaraHandler = async (req, res) => {
     const id = req.params.id;
@@ -70,14 +70,12 @@ const createCamaraHandler = async (req, res) => {
     const { nombre, ubicacion, id_Jurisdiccion } = req.body;
     const errores = [];
 
-    if (!nombre) errores.push('El campo nombre es requerido');
-    if (typeof nombre !== 'string') errores.push('El campo nombre debe ser una cadena de texto');
-    if (!ubicacion) errores.push('El campo ubicación es requerido');
-    if (typeof ubicacion !== 'string') errores.push('El campo ubicación debe ser una cadena de texto');
-    if (!id_Jurisdiccion || isNaN(id_Jurisdiccion)) errores.push('El campo id_Jurisdiccion debe ser un número válido');
+    if (!nombre || typeof nombre !== 'string') errores.push("El campo 'nombre' es obligatorio y debe ser texto.");
+    if (!ubicacion || typeof ubicacion !== 'string') errores.push("El campo 'ubicacion' es obligatorio y debe ser texto.");
+    if (!id_Jurisdiccion || isNaN(id_Jurisdiccion)) errores.push("El campo 'id_Jurisdiccion' es obligatorio y debe ser un número.");
 
     if (errores.length > 0) {
-        return res.status(400).json({ message: 'Se encontraron los siguientes errores', errores });
+        return res.status(400).json({ message: "Errores de validación", errores });
     }
 
     try {
@@ -102,13 +100,13 @@ const updateCamaraHandler = async (req, res) => {
     const { nombre, ubicacion, id_Jurisdiccion } = req.body;
     const errores = [];
 
-    if (!id || isNaN(id)) errores.push('El campo ID es inválido');
-    if (nombre && typeof nombre !== 'string') errores.push('El campo nombre debe ser una cadena de texto');
-    if (ubicacion && typeof ubicacion !== 'string') errores.push('El campo ubicación debe ser una cadena de texto');
-    if (id_Jurisdiccion && isNaN(id_Jurisdiccion)) errores.push('El campo id_Jurisdiccion debe ser un número válido');
+    if (!id || isNaN(id)) errores.push("ID inválido.");
+    if (!nombre || typeof nombre !== 'string') errores.push("El campo 'nombre' es obligatorio y debe ser texto.");
+    if (!ubicacion || typeof ubicacion !== 'string') errores.push("El campo 'ubicacion' es obligatorio y debe ser texto.");
+    if (!id_Jurisdiccion || isNaN(id_Jurisdiccion)) errores.push("El campo 'id_Jurisdiccion' es obligatorio y debe ser un número.");
 
     if (errores.length > 0) {
-        return res.status(400).json({ message: 'Se encontraron los siguientes errores', errores });
+        return res.status(400).json({ message: "Errores de validación", errores });
     }
 
     try {
@@ -127,7 +125,7 @@ const updateCamaraHandler = async (req, res) => {
     }
 };
 
-// Handler para eliminar una cámara (cambia el estado a false)
+// Handler para eliminar una cámara (borrado lógico)
 const deleteCamaraHandler = async (req, res) => {
     const id = req.params.id;
 
@@ -156,5 +154,5 @@ module.exports = {
     getCamaraHandler,
     createCamaraHandler,
     updateCamaraHandler,
-    deleteCamaraHandler
+    deleteCamaraHandler,
 };

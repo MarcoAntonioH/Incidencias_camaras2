@@ -1,6 +1,6 @@
-const { Incidencia } = require("../db.connection");
+const { Incidencia } = require("../db_connection");
 
-// Obtener todas las incidencias (solo activas)
+// Obtener todas las incidencias activas con paginación
 const getAllIncidencias = async (page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
     try {
@@ -10,14 +10,18 @@ const getAllIncidencias = async (page = 1, limit = 20) => {
             offset,
             order: [["id", "ASC"]],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return {
+            totalCount: response.count,
+            data: response.rows,
+            currentPage: page,
+        } || null;
     } catch (error) {
         console.error("Error en el controlador al traer todas las Incidencias:", error);
         return false;
     }
 };
 
-// Obtener una incidencia por ID (solo si está activa)
+// Obtener una incidencia por ID
 const getIncidencia = async (id) => {
     try {
         const response = await Incidencia.findOne({ where: { id, state: true } });
@@ -29,17 +33,9 @@ const getIncidencia = async (id) => {
 };
 
 // Crear una nueva incidencia
-const createIncidencia = async ({ descripcion, hora, id_codigo, id_camara, id_turno, id_usuario }) => {
+const createIncidencia = async (datos) => {
     try {
-        const response = await Incidencia.create({
-            descripcion,
-            hora,
-            id_codigo,
-            id_camara,
-            id_turno,
-            id_usuario,
-            state: true,
-        });
+        const response = await Incidencia.create({ ...datos, state: true });
         return response || null;
     } catch (error) {
         console.error("Error en el controlador al crear la Incidencia:", error);
@@ -59,15 +55,11 @@ const updateIncidencia = async (id, datos) => {
     }
 };
 
-// Eliminar una incidencia (cambia el estado a false en lugar de eliminar)
+// Borrado lógico
 const deleteIncidencia = async (id) => {
     try {
         const incidencia = await Incidencia.findByPk(id);
-
-        if (!incidencia) {
-            console.error("Incidencia no encontrada");
-            return null;
-        }
+        if (!incidencia) return null;
 
         incidencia.state = false;
         await incidencia.save();

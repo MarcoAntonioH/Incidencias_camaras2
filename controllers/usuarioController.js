@@ -1,5 +1,5 @@
 const argon2 = require("argon2");
-const { Usuario } = require("../db.connection");
+const { Usuario } = require("../db_connection");
 
 // Obtener todos los usuarios (solo activos)
 const getAllUsuarios = async (page = 1, limit = 20) => {
