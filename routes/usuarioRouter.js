@@ -7,12 +7,12 @@ const {
     deleteUsuarioHandler
 } = require("../handlers/usuarioHandlers");
 
-const usuarioRutas = Router();
+const router = Router();
 
-usuarioRutas.get("/", getAllUsuariosHandler);
-usuarioRutas.get("/:id", getUsuarioHandler);
-usuarioRutas.post("/", createUsuarioHandler);
-usuarioRutas.put("/:id", updateUsuarioHandler);
-usuarioRutas.delete("/:id", deleteUsuarioHandler);
+router.get("/", getAllUsuariosHandler);
+router.get("/:id", getUsuarioHandler);
+router.post("/", createUsuarioHandler);
+router.put("/:id", updateUsuarioHandler);
+router.delete("/:id", deleteUsuarioHandler);
 
-module.exports = usuarioRutas;
+module.exports = router;
